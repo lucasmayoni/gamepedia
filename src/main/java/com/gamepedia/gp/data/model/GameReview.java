@@ -13,6 +13,14 @@ public class GameReview {
 
     }
 
+    public GameReview(Long id, Game game, String reviewer, Date reviewDate, String review) {
+        this.gameReviewId = id;
+        this.game = game;
+        this.reviewer = reviewer;
+        this.reviewDate = reviewDate;
+        this.review = review;
+    }
+
     @Id
     @Column(name="id")
     private Long gameReviewId;

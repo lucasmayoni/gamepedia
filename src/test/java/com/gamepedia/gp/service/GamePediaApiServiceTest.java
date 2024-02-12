@@ -1,6 +1,7 @@
 package com.gamepedia.gp.service;
 
 import com.gamepedia.gp.data.model.Game;
+import com.gamepedia.gp.data.model.GameReview;
 import com.gamepedia.gp.data.repository.GameRepository;
 import com.gamepedia.gp.service.error.NotFoundException;
 import com.gamepedia.gp.utils.Platform;
@@ -91,6 +92,56 @@ class GamePediaApiServiceTest {
         gameService.deleteGame(gameToDelete);
     }
 
+
+    @Test
+    void testAddReviewToGame_Existing() {
+        // Arrange
+        Game existingGame = newGameEntity();
+        GameReview newGameReview = new GameReview(1L, existingGame, "Lucas",Date.valueOf("2024-02-12"), "Great game!");
+
+        // Mock the behavior of findById
+        when(gameRepository.findById(existingGame.getGameId())).thenReturn(Optional.of(existingGame));
+
+        // Mock the behavior of save
+        when(gameRepository.save(any(Game.class))).thenAnswer(invocation -> invocation.getArgument(0));
+
+        // Act
+        Game updatedGame = gameService.addGameReview(existingGame, newGameReview);
+
+        // Assert
+        assertEquals(existingGame, updatedGame, "The returned game should be the same as the existing game");
+
+        // Verify that findById was called
+        verify(gameRepository).findById(existingGame.getGameId());
+
+        // Verify that save was called with the updated game
+        verify(gameRepository).save(existingGame);
+
+        // Additional assertions if needed
+        assertEquals(1, updatedGame.getReviews().size(), "One review should be added");
+        assertEquals(newGameReview, updatedGame.getReviews().get(0), "The added review should match the expected review");
+    }
+
+    @Test
+    void testAddReviewToGame_NotExisting() {
+
+    }
+
+    private Game newGameWithReview() {
+        Game newGame = newGameEntity();
+
+        List<GameReview> reviews = new ArrayList<>();
+        GameReview review = new GameReview();
+        review.setGame(newGame);
+        review.setReviewer("Lucas");
+        review.setReviewDate(Date.valueOf("2024-02-12"));
+        review.setReview("This is an excellent game");
+        reviews.add(review);
+
+        newGame.setReviews(reviews);
+
+        return newGame;
+    }
 
     private Game newGameEntity() {
         return new Game(2L,"WatchDogs 2",  "Grate Game Description",
