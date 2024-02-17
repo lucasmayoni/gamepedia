@@ -2,6 +2,7 @@ package com.gamepedia.gp.api.controller;
 
 import com.gamepedia.gp.data.model.Game;
 import com.gamepedia.gp.service.GameService;
+import org.apache.logging.log4j.Logger;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 
@@ -21,7 +22,7 @@ public class GameController {
         return this.gameService.getAllGames();
     }
     @GetMapping("/{id}")
-    public Game getGame(Long id){
+    public Game getGame(@PathVariable("id")Long id){
         return this.gameService.getGameById(id);
     }
 
@@ -32,13 +33,16 @@ public class GameController {
     }
 
     @PutMapping("/{id}")
-    public Game updateGame(Game game) {
+    public Game updateGame(@PathVariable("id") Long id, @RequestBody Game game) throws Exception {
+        if(!id.equals(game.getGameId())){
+            throw new Exception("path variable must match incoming request id");
+        }
         return this.gameService.updateGame(game);
     }
 
     @DeleteMapping("/{id}")
     @ResponseStatus(HttpStatus.RESET_CONTENT)
-    public void deleteGame(Game game) {
+    public void deleteGame(@PathVariable("id") Long id, Game game) {
         this.gameService.deleteGame(game);
     }
 }

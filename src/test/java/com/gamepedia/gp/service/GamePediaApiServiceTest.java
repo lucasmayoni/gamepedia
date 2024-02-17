@@ -35,8 +35,12 @@ class GamePediaApiServiceTest {
 
     @Test
     void testFindByPlatform() {
-        gameService.findByPlatform(Platform.XBOX);
-        verify(gameRepository).findByPlatform(Platform.XBOX);
+        Game game = newGameEntity();
+        List<Game> games = new ArrayList<>();
+        games.add(game);
+        when(gameRepository.findByPlatform(game.getPlatform())).thenReturn(games);
+        game = gameService.findByPlatform(Platform.XBOX).get(0);
+        assertEquals(Platform.XBOX, game.getPlatform());
     }
 
 
@@ -76,7 +80,6 @@ class GamePediaApiServiceTest {
     @Test
     void testUpdateGame() {
         Game expectedGame = newGameEntity();
-        when(gameRepository.findById((expectedGame.getGameId()))).thenReturn(Optional.of((expectedGame)));
         when(gameRepository.save(any(Game.class))).thenReturn(expectedGame);
 
         Game updatedGame = this.gameService.updateGame(expectedGame);
@@ -93,6 +96,15 @@ class GamePediaApiServiceTest {
     }
 
 
+    @Test
+    void testAddReviewToGame_NotExisting() {
+        Game notExistingGame = newGameEntity();
+        GameReview notExistingGameReview = new GameReview(1L, notExistingGame, "Lucas",Date.valueOf("2024-02-12"), "Great game!");
+        Optional<Game> optional = Optional.empty();
+        Mockito.doReturn(optional).when(gameRepository).findById(notExistingGame.getGameId());
+        assertThrows(NotFoundException.class, ()->gameService.addGameReview(notExistingGame, notExistingGameReview), "exception");
+
+    }
     @Test
     void testAddReviewToGame_Existing() {
         // Arrange
@@ -120,27 +132,6 @@ class GamePediaApiServiceTest {
         // Additional assertions if needed
         assertEquals(1, updatedGame.getReviews().size(), "One review should be added");
         assertEquals(newGameReview, updatedGame.getReviews().get(0), "The added review should match the expected review");
-    }
-
-    @Test
-    void testAddReviewToGame_NotExisting() {
-
-    }
-
-    private Game newGameWithReview() {
-        Game newGame = newGameEntity();
-
-        List<GameReview> reviews = new ArrayList<>();
-        GameReview review = new GameReview();
-        review.setGame(newGame);
-        review.setReviewer("Lucas");
-        review.setReviewDate(Date.valueOf("2024-02-12"));
-        review.setReview("This is an excellent game");
-        reviews.add(review);
-
-        newGame.setReviews(reviews);
-
-        return newGame;
     }
 
     private Game newGameEntity() {

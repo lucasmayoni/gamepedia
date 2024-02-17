@@ -43,11 +43,7 @@ public class GameService {
     }
 
     public Game updateGame(Game game) {
-        Optional<Game> existingGame = this.gameRepository.findById(game.getGameId());
-        if (existingGame.isEmpty()) {
-            throw new NotFoundException("Game ID is not present");
-        }
-        return this.gameRepository.save(existingGame.get());
+        return this.gameRepository.save(game);
     }
 
     public void deleteGame(Game game) {
@@ -74,5 +70,9 @@ public class GameService {
 
         // Save the updated game entity
         return this.gameRepository.save(existingGame);
+    }
+
+    private Game translateToModel(Game game) {
+        return new Game(game.getGameId(), game.getGameTitle(), game.getGameDescription(), game.getPlatform(), game.getReleaseDate());
     }
 }
