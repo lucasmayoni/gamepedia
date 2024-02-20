@@ -23,9 +23,11 @@ public class GameReview {
 
     @Id
     @Column(name="id")
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long gameReviewId;
     @ManyToOne
     @JoinColumn(name="game_id")
+    @JsonIgnoreProperties("reviews")
     private Game game;
 
     @Column(name="reviewer")

@@ -2,7 +2,6 @@ package com.gamepedia.gp.api.controller;
 
 import com.gamepedia.gp.data.model.Game;
 import com.gamepedia.gp.service.GameService;
-import org.apache.logging.log4j.Logger;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 
@@ -28,7 +27,7 @@ public class GameController {
 
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
-    public Game addNewGame(Game game) {
+    public Game addNewGame(@RequestBody Game game) {
         return this.gameService.addGame(game);
     }
 

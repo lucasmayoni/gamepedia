@@ -8,13 +8,13 @@ import java.sql.Date;
 import java.util.List;
 
 @Entity
-@Table(name="game")
+@Table(name="game", schema = "gp")
 public class Game {
     public Game(){
 
     }
     public Game(Long gameId, String gameTitle, String gameDescription, Platform platform, Date releaseDate){
-        this.gameId = gameId;
+        this.id = gameId;
         this.gameTitle = gameTitle;
         this.gameDescription = gameDescription;
         this.platform = platform;
@@ -22,7 +22,8 @@ public class Game {
     }
     @Id
     @Column(name="id")
-    private Long gameId;
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
     @Column(name="title")
     private String gameTitle;
     @Column(name="description")
@@ -40,11 +41,11 @@ public class Game {
 
 
     public Long getGameId() {
-        return gameId;
+        return id;
     }
 
     public void setGameId(Long gameId) {
-        this.gameId = gameId;
+        this.id = gameId;
     }
 
     public String getGameTitle() {
@@ -89,7 +90,7 @@ public class Game {
 
     @Override
     public String toString() {
-        return "Game { gameId:"+gameId+", title:"+gameTitle+", description:"+gameDescription+
+        return "Game { id:"+id+", title:"+gameTitle+", description:"+gameDescription+
                 ", platform:"+platform+", releaseDate:"+releaseDate;
     }
 }

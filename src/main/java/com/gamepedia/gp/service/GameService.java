@@ -6,7 +6,6 @@ import com.gamepedia.gp.data.repository.GameRepository;
 import com.gamepedia.gp.data.repository.GameReviewRepository;
 import com.gamepedia.gp.service.error.NotFoundException;
 import com.gamepedia.gp.utils.Platform;
-import org.springframework.data.crossstore.ChangeSetPersister;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
@@ -17,9 +16,11 @@ import java.util.Optional;
 public class GameService {
 
     private final GameRepository gameRepository;
+    private final GameReviewRepository gameReviewRepository;
 
-    public GameService(GameRepository gameRepository) {
+    public GameService(GameRepository gameRepository, GameReviewRepository gameReviewRepository) {
         this.gameRepository = gameRepository;
+        this.gameReviewRepository = gameReviewRepository;
     }
     public List<Game> findByPlatform(Platform platform) {
         return this.gameRepository.findByPlatform(platform);
@@ -50,6 +51,7 @@ public class GameService {
         this.gameRepository.delete(game);
     }
 
+
     // Game Review Stuff
     public Game addGameReview(Game game, GameReview gameReview) {
         Optional<Game> optionalGame = this.gameRepository.findById(game.getGameId());
@@ -70,6 +72,10 @@ public class GameService {
 
         // Save the updated game entity
         return this.gameRepository.save(existingGame);
+    }
+
+    public List<GameReview> findByGame(Long gameId) {
+        return this.gameReviewRepository.findByGame_Id(gameId);
     }
 
     private Game translateToModel(Game game) {
