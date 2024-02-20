@@ -7,6 +7,7 @@ import java.sql.Date;
 
 @Entity
 @Table(name="game_review")
+@SuppressWarnings("unused")
 public class GameReview {
 
     public GameReview() {
